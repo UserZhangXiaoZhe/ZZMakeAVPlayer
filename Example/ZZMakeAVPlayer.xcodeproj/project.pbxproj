@@ -37,7 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1B161B4A5986865867F99E2F /* ZZMakeAVPlayer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = ZZMakeAVPlayer.podspec; path = ../ZZMakeAVPlayer.podspec; sourceTree = "<group>"; };
+		1B161B4A5986865867F99E2F /* ZZMakeAVPlayer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ZZMakeAVPlayer.podspec; path = ../ZZMakeAVPlayer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3A3F6F95C2ABEE527CE679C6 /* Pods-ZZMakeAVPlayer_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZZMakeAVPlayer_Tests.debug.xcconfig"; path = "Target Support Files/Pods-ZZMakeAVPlayer_Tests/Pods-ZZMakeAVPlayer_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* ZZMakeAVPlayer_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZZMakeAVPlayer_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -60,11 +60,11 @@
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7B91AA93559B77FAA15C0C79 /* Pods-ZZMakeAVPlayer_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZZMakeAVPlayer_Example.release.xcconfig"; path = "Target Support Files/Pods-ZZMakeAVPlayer_Example/Pods-ZZMakeAVPlayer_Example.release.xcconfig"; sourceTree = "<group>"; };
-		7D81AD0E0FD83EB0E9950C46 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		7D81AD0E0FD83EB0E9950C46 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A3C031DDEC4D4904ED25F9D5 /* Pods_ZZMakeAVPlayer_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZZMakeAVPlayer_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5FC827CFD9D1CBDC9F035F8 /* Pods-ZZMakeAVPlayer_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZZMakeAVPlayer_Tests.release.xcconfig"; path = "Target Support Files/Pods-ZZMakeAVPlayer_Tests/Pods-ZZMakeAVPlayer_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		CC1619739D82658033D08B85 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		CC1619739D82658033D08B85 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		F9529EF59D870D0A693B1975 /* Pods-ZZMakeAVPlayer_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZZMakeAVPlayer_Example.debug.xcconfig"; path = "Target Support Files/Pods-ZZMakeAVPlayer_Example/Pods-ZZMakeAVPlayer_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F9E53FC66BDFE0945EE8A917 /* Pods_ZZMakeAVPlayer_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZZMakeAVPlayer_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -103,7 +103,6 @@
 				3A3F6F95C2ABEE527CE679C6 /* Pods-ZZMakeAVPlayer_Tests.debug.xcconfig */,
 				C5FC827CFD9D1CBDC9F035F8 /* Pods-ZZMakeAVPlayer_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -208,7 +207,7 @@
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
-				D85C6264D0245791DCE52FCA /* [CP] Embed Pods Frameworks */,
+				CD3A375C80D33198B6C79DF4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -258,6 +257,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -339,7 +339,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D85C6264D0245791DCE52FCA /* [CP] Embed Pods Frameworks */ = {
+		CD3A375C80D33198B6C79DF4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -497,10 +497,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZZMakeAVPlayer/ZZMakeAVPlayer-Prefix.pch";
 				INFOPLIST_FILE = "ZZMakeAVPlayer/ZZMakeAVPlayer-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -513,10 +515,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ZZMakeAVPlayer/ZZMakeAVPlayer-Prefix.pch";
 				INFOPLIST_FILE = "ZZMakeAVPlayer/ZZMakeAVPlayer-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

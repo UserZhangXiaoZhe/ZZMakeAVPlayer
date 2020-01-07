@@ -7,7 +7,7 @@
 //
 
 #import "ZZViewController.h"
-
+#import "ZZAVPlayerVC.h"
 @interface ZZViewController ()
 
 @end
@@ -17,9 +17,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-}
+	
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    button.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+    [button setTitle:@"ZZMakeAVPlayer" forState:UIControlStateNormal];
+    button.bounds = CGRectMake(0, 0, button.intrinsicContentSize.width, button.intrinsicContentSize.height);
+    button.center = CGPointMake(self.view.center.x, 200);
+    [button addTarget:self action:@selector(clickButton:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
 
+}
+- (void)clickButton:(UIButton *)button {
+    ZZAVPlayerVC *vc = [[ZZAVPlayerVC alloc]init];
+    vc.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:vc animated:YES completion:^{}];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

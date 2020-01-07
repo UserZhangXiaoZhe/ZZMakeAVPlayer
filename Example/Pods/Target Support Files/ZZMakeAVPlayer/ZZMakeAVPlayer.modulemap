@@ -1,0 +1,6 @@
+framework module ZZMakeAVPlayer {
+  umbrella header "ZZMakeAVPlayer-umbrella.h"
+
+  export *
+  module * { export * }
+}

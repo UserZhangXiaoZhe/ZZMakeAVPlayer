@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZZMakeAVPlayer'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of ZZMakeAVPlayer.'
+  s.version          = '1.0.0'
+  s.summary          = '一个简单的视频播放工具'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+  一个简单的视频播放工具，可以横竖屏，可以调节进度，可以调节亮度，可以查看目录并选择，可以单次、顺序、循环播放，方便简单。
                        DESC
 
   s.homepage         = 'https://github.com/UserZhangXiaoZhe/ZZMakeAVPlayer'
@@ -31,7 +31,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'ZZMakeAVPlayer/Classes/**/*'
-  
+  s.resource = 'ZZMakeAVPlayer/ZZMakePlayerResources.bundle'
   # s.resource_bundles = {
   #   'ZZMakeAVPlayer' => ['ZZMakeAVPlayer/Assets/*.png']
   # }
