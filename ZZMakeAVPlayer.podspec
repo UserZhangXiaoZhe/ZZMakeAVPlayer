@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZZMakeAVPlayer'
-  s.version          = '1.0.1'
+  s.version          = '1.0.3'
   s.summary          = '一个简单的视频播放工具'
 
 # This description is used to generate tags and improve search results.
