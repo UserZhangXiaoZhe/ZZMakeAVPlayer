@@ -6,7 +6,10 @@
 //
 
 #import "ZZAVPlayer.h"
+#import "ZZAVPlayerURLSession.h"
+
 #import "UIImage+ZZAVPlayerImage.h"
+#import "ZZAVPlayerMacro.h"
 
 static UIBackgroundTaskIdentifier _bgTaskId;
 
@@ -128,20 +131,29 @@ static UIBackgroundTaskIdentifier _bgTaskId;
 }
 
 #pragma mark - public methods
-/// 获取AVPlayerLayer
+#pragma mark -  获取AVPlayerLayer
 - (AVPlayerLayer *)zz_playerGetPlayerLayerWithURL:(NSURL *)avUrl{
     self.avUrl = avUrl;
+    
+    //1.判断本地是否有缓存
+    NSString *videoPath = [ZZAVPlayerTool zz_avPlayerGetDocumentPathWithUrl:avUrl];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:videoPath]) {
+        avUrl = [NSURL fileURLWithPath:videoPath];
+    }else{
+        //2.判断url是否可用
+        BOOL isCanUrl = [ZZAVPlayerTool zz_avPlayerHaveTracksWithURL:avUrl];
+        if (!isCanUrl) {
+            [self setAvPlayerState:ZZAVPlayerStatusError];
+            self.avPlayerState = ZZAVPlayerStatusError;
+            self.avPlayerErrorCode = ZZAVPlayerErrorCodeUrlError;
+            return nil;
+        }
+    }
+    // 3.准备工作
     [self zz_playerBeforePlayWithURL:avUrl];
-    self.isLocalResource = YES;
     
     if (self.isLocalResource) {
         AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:avUrl options:nil];
-        
-        NSArray *tracks = [urlAsset tracksWithMediaType:AVMediaTypeVideo];
-        if ([tracks count] <= 0) {
-            NSLog(@"不可看");
-        }
-        
         self.avPlayerItem = [AVPlayerItem playerItemWithAsset:urlAsset];
         if (self.avPlayer) {
             [self.avPlayer replaceCurrentItemWithPlayerItem:self.avPlayerItem];
@@ -150,6 +162,15 @@ static UIBackgroundTaskIdentifier _bgTaskId;
         }
         self.avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
         
+    }else{
+        AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:avUrl options:nil];
+        self.avPlayerItem = [AVPlayerItem playerItemWithAsset:urlAsset];
+        if (self.avPlayer) {
+            [self.avPlayer replaceCurrentItemWithPlayerItem:self.avPlayerItem];
+        }else{
+            self.avPlayer = [AVPlayer playerWithPlayerItem:self.avPlayerItem];
+        }
+        self.avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
     }
     
     [self setNotificationAndKVO];
@@ -163,7 +184,7 @@ static UIBackgroundTaskIdentifier _bgTaskId;
     
     return self.avPlayerLayer;
 }
-/// 重播
+#pragma mark -  重播
 -(void)zz_playerReplayWithURL:(NSURL *)avUrl{
     self.avUrl = avUrl;
     [self zz_playerBeforePlayWithURL:avUrl];
@@ -192,7 +213,7 @@ static UIBackgroundTaskIdentifier _bgTaskId;
     //后台播放
     [session setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
-/// 播放前准备
+#pragma mark -  播放前准备
 -(void)zz_playerBeforePlayWithURL:(NSURL *)avUrl{
     [self.avPlayer pause];
     [self removeNotificationAndKVO];
@@ -200,17 +221,21 @@ static UIBackgroundTaskIdentifier _bgTaskId;
     self.currentTime = 0;
     self.isUserPause = NO;
     
+    // 第一帧
     self.fristImage = [ZZAVPlayerTool zz_avPlayerGetFirstImageWtihUrl:avUrl];
+    // 总时长
     self.totalTime = [ZZAVPlayerTool zz_avPlayerGetVideoTotalTimeWithURL:avUrl];
     if ([avUrl.scheme isEqualToString:@"file"]) {
         //本地资源
+        self.isLocalResource = YES;
         [self setAvPlayerState:self.isNowPlay? ZZAVPlayerStatusPlaying : ZZAVPlayerStatusPause];
     }else{
+        self.isLocalResource = NO;
         [self setAvPlayerState:self.isNowPlay? ZZAVPlayerStatusLoading : ZZAVPlayerStatusPause];
     }
     
 }
-/// 开始播放
+#pragma mark -  开始播放
 -(void)zz_playerSeekToTime:(CGFloat)seconds{
     if (self.avPlayerState == ZZAVPlayerStatusStopped) return;
     
@@ -229,24 +254,33 @@ static UIBackgroundTaskIdentifier _bgTaskId;
         
     }];
 }
-/// 恢复播放
+#pragma mark -  恢复播放
 -(void)zz_playerResume{
     [self.avPlayer play];
     [self setAvPlayerState:(ZZAVPlayerStatusPlaying)];
 }
-/// 暂停
+#pragma mark -  暂停
 -(void)zz_playerPause{
     [self.avPlayer pause];
     [self setAvPlayerState:(ZZAVPlayerStatusPause)];
 }
-/// 停止
+#pragma mark -  停止
 -(void)zz_playerStop{
     
-    [self.avPlayer seekToTime:kCMTimeZero toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+    [self.avPlayer seekToTime:kCMTimeZero
+              toleranceBefore:kCMTimeZero
+               toleranceAfter:kCMTimeZero
+            completionHandler:^(BOOL finished) {
+        
         if (finished) {
             // 进度处理
-            if (self.delegate && [self.delegate respondsToSelector:@selector(zz_player:progress:currentTime:durationTime:)]) {
-                [self.delegate zz_player:self progress:self.currentProgress currentTime:self.currentTime durationTime:self.totalTime];
+            if (self.delegate &&
+                [self.delegate respondsToSelector:@selector(zz_player:progress:currentTime:durationTime:)]) {
+                
+                [self.delegate zz_player:self
+                                progress:self.currentProgress
+                             currentTime:self.currentTime
+                            durationTime:self.totalTime];
             }
             self.isUserPause = NO;
             self.currentTime = 0.0;
@@ -258,7 +292,7 @@ static UIBackgroundTaskIdentifier _bgTaskId;
     
 }
 
-/// 显示锁屏信息
+#pragma mark -  显示锁屏信息
 - (void)setLockingInfo {
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -283,7 +317,10 @@ static UIBackgroundTaskIdentifier _bgTaskId;
 #pragma mark - Delegate
 
 #pragma mark - KVO
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
+-(void)observeValueForKeyPath:(NSString *)keyPath
+                     ofObject:(id)object
+                       change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                      context:(void *)context{
     
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
     if ([keyPath isEqualToString:@"status"]) {
@@ -291,7 +328,8 @@ static UIBackgroundTaskIdentifier _bgTaskId;
         if ([playerItem status] == AVPlayerItemStatusReadyToPlay) {
             //准备完毕，可以播放
             [self observerStatusWithPlayerItem:playerItem];
-        }else if([playerItem status] == AVPlayerItemStatusFailed || ([playerItem status] == AVPlayerItemStatusUnknown) ) {
+        }else if([playerItem status] == AVPlayerItemStatusFailed ||
+                 ([playerItem status] == AVPlayerItemStatusUnknown) ) {
             //加载失败
             [self zz_playerStop];
         }
@@ -304,10 +342,9 @@ static UIBackgroundTaskIdentifier _bgTaskId;
             self.avPlayerState = ZZAVPlayerStatusLoading;
             [self observerAVPlayerBufferEmpty];
         }
-        
     }else if ( [keyPath isEqualToString:@"playbackLikelyToKeepUp"] ){
         // seekToTime后,可以正常播放，
-        // 相当于readyToPlay，一般拖动滑竿菊花转，到了这个这个状态菊花隐藏
+        // 相当于readyToPlay，一般拖动滑竿菊花转，到了这个状态菊花隐藏
     }
 }
 
@@ -315,20 +352,28 @@ static UIBackgroundTaskIdentifier _bgTaskId;
 -(void)observerStatusWithPlayerItem:(AVPlayerItem *)playerItem{
     if (self.isNowPlay){
         [self.avPlayer play];
+        [self setAvPlayerState:(ZZAVPlayerStatusPlaying)];
     };
-    __weak typeof(self) weakself = self;
+    WeakSelf
     //(1,1) 每一秒执行一次
-    self.avPlayerObserver = [self.avPlayer addPeriodicTimeObserverForInterval:(CMTimeMake(1, 1)) queue:NULL usingBlock:^(CMTime time) {
+    self.avPlayerObserver =
+    [self.avPlayer addPeriodicTimeObserverForInterval:(CMTimeMake(1, 1))
+                                                queue:NULL
+                                           usingBlock:^(CMTime time) {
+        StrongSelf
         CGFloat current = playerItem.currentTime.value / playerItem.currentTime.timescale;
-        //NSLog(@"当前播放时间：%.2f",current);
-        if (weakself.isUserPause == NO) {
-            //weakself.avPlayerState = ZZAVPlayerStatusPlaying;
+        NSLog(@"当前播放时间：%.2f",current);
+        if (self.isUserPause == NO) {
+            //self.avPlayerState = ZZAVPlayerStatusPlaying;
         }
-        if (weakself.currentTime != current) {
-            weakself.currentTime = current > weakself.totalTime ? weakself.totalTime : current;
-            [weakself setLockingInfo];
-            if ([weakself.delegate respondsToSelector:@selector(zz_player:progress:currentTime:durationTime:)]) {
-                [weakself.delegate zz_player:weakself progress:weakself.currentProgress currentTime:current durationTime:weakself.totalTime];
+        if (self.currentTime != current) {
+            self.currentTime = current > self.totalTime ? self.totalTime : current;
+            [self setLockingInfo];
+            if ([self.delegate respondsToSelector:@selector(zz_player:progress:currentTime:durationTime:)]) {
+                [self.delegate zz_player:self
+                                progress:self.currentProgress
+                             currentTime:current
+                            durationTime:self.totalTime];
             }
         }
     }];
@@ -346,7 +391,7 @@ static UIBackgroundTaskIdentifier _bgTaskId;
     CGFloat totalTime = CMTimeGetSeconds(durationTime);
     // 计算缓存进度
     self.loadedProgress = timeInterval / totalTime;
-    //NSLog(@"缓冲总进度：%f",self.loadedProgress);
+    NSLog(@"缓冲总进度：%f",self.loadedProgress);
     
 }
 /// 处理监听 缓冲区域

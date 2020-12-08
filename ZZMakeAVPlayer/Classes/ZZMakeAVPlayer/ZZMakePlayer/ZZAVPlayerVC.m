@@ -74,7 +74,8 @@
     self.playerView.videoArray = self.fileArray;
     self.playerView.videoIndex = 0;
     
-    [self.playerView startPlayWithURL:urlPath1 startTime:0];
+    NSURL *webUrl  = [NSURL URLWithString:@"https://mp4.vjshi.com/2018-08-31/3ba67e58deb45fefe7f7d3d16dbf2b16.mp4"];
+    [self.playerView startPlayWithURL:webUrl startTime:0];
     
     [self.view addSubview:self.playerView];
 }

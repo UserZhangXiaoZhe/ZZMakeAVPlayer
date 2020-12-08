@@ -157,7 +157,8 @@ ZZAVPlayerSettingViewDelegate>
 //初始化
 -(void)setupSubview{
     self.backgroundColor = UIColor.blackColor;
-    [self addSubview:self.contentView];// 显示播放器layer视图层
+    // 显示播放器layer视图层
+    [self addSubview:self.contentView];
     [self addSubview:self.backgroundImageView];
     [self addSubview:self.loadingView];
     [self addSubview:self.topView];
@@ -229,12 +230,12 @@ ZZAVPlayerSettingViewDelegate>
     [singleTap requireGestureRecognizerToFail:doubleTap];
     
 }
-//添加通知
+#pragma mark - 添加通知
 -(void)addNotification{
     //横竖屏切换 通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDeviceOrientationChange) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
-// 创建只执行一次的定时器,来自动隐藏控制view
+#pragma mark -  创建只执行一次的定时器,来自动隐藏控制view
 -(void)setupTimer{
     // 为0时表示关闭自动隐藏功能
     if (self.configuration.autoHideTime <= 0) return;
@@ -247,13 +248,13 @@ ZZAVPlayerSettingViewDelegate>
     
     self.timer = timer;
 }
-//使定时器失效
+/// 使定时器失效
 -(void)invalidTimer{
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autohiddenControlView) object:nil];
     [self.timer invalidate];
     self.timer = nil;
 }
-//显示控制view
+#pragma mark - 显示、隐藏控制view
 -(void)showControlView{
     if (self.configuration.avPlayerStatus == ZZAVPlayerStatusPlaying) {
         [self setupTimer];
@@ -269,7 +270,7 @@ ZZAVPlayerSettingViewDelegate>
         [self.delegate zz_avPlayerView:self controlViewStatus:(ZZAVPlayerControlViewStatusShow)];
     }
 }
-//隐藏控制view
+/// 隐藏控制view
 -(void)hiddenControlView{
     self.configuration.isHiddenControlView = YES;
     [UIView animateWithDuration:0.5 animations:^{
@@ -280,7 +281,7 @@ ZZAVPlayerSettingViewDelegate>
         [self.delegate zz_avPlayerView:self controlViewStatus:(ZZAVPlayerControlViewStatusHidden)];
     }
 }
-//自动隐藏控制view
+/// 自动隐藏控制view
 -(void)autohiddenControlView{
     [self hiddenControlView];
     [self invalidTimer];
@@ -291,7 +292,7 @@ ZZAVPlayerSettingViewDelegate>
         }
     }
 }
-// 播放和暂停
+#pragma mark -  播放和暂停
 - (void)playOrPauseAction:(UIButton*)sender{
     sender.selected = !sender.selected;
     if (self.configuration.avPlayerStatus == ZZAVPlayerStatusPlaying) {
@@ -306,7 +307,7 @@ ZZAVPlayerSettingViewDelegate>
         [self.avPlayer zz_playerSeekToTime:self.startTime];
     }
 }
-// 返回按钮
+#pragma mark -  返回按钮
 - (void)goBackAction:(UIButton*)sender{
     if ([self.delegate respondsToSelector:@selector(zz_avPlayerView:avPlayerStatus:)]) {
         
@@ -315,7 +316,7 @@ ZZAVPlayerSettingViewDelegate>
         self.avPlayer = nil;
     }
 }
-//进度条的拖拽事件 监听UISlider拖动状态
+#pragma mark - 进度条的拖拽事件 监听UISlider拖动状态
 - (void)sliderValueChanged:(UISlider*)slider forEvent:(UIEvent*)event {
     //MyLog(@"进度条的拖拽:%f",slider.value);
     UITouch *touchEvent = [[event allTouches]anyObject];
@@ -346,7 +347,7 @@ ZZAVPlayerSettingViewDelegate>
             break;
     }
 }
-//视频进度条的点击事件
+#pragma mark - 视频进度条的点击事件
 - (void)tapGestureForSlider:(UITapGestureRecognizer *)gesture{
     CGPoint touchLocation = [gesture locationInView:self.playScheduleSlider];
     CGFloat value = (self.playScheduleSlider.maximumValue - self.playScheduleSlider.minimumValue) * (touchLocation.x / self.playScheduleSlider.frame.size.width);
@@ -357,7 +358,7 @@ ZZAVPlayerSettingViewDelegate>
     
 }
 
-//底部按钮事件处理
+#pragma mark - 底部按钮事件处理
 - (void)bottomButtonAction:(UIButton*)sender{
     [self hiddenControlView];
     
@@ -398,7 +399,7 @@ ZZAVPlayerSettingViewDelegate>
     
 }
 
-// 全屏切换方法
+#pragma mark -  全屏切换方法
 - (void)fullScreenAction:(UIButton*)sender{
     sender.selected = !sender.selected;
     self.configuration.isFullScreen = sender.selected;
@@ -413,7 +414,7 @@ ZZAVPlayerSettingViewDelegate>
        }
 }
 
-/// 加载时的UI
+#pragma mark - 加载、开始、暂停播放时的UI
 -(void)loadingPlayerOnView{
     self.loadingView.hidden = NO;
     [self.loadingView startAnimating];
@@ -445,7 +446,7 @@ ZZAVPlayerSettingViewDelegate>
     self.backgroundImageView.hidden = YES;
     self.playOrPauseButton.selected = NO;
 }
-/// 结束播放时的UI
+#pragma mark - 结束、停止、重复播放时的UI
 -(void)endPlayerOnView{
     switch (self.configuration.avPlayerType) {
         case ZZAVPlayerPlayTypeOnce:{//仅一次
@@ -734,7 +735,7 @@ ZZAVPlayerSettingViewDelegate>
     [self switchScreen:(direction)];
 }
 
-#pragma mark - public methods
+#pragma mark - 开始播放
 - (void)startPlayWithURL:(NSURL *)avUrl startTime:(CGFloat)startTime{
     self.configuration.avUrl = avUrl;
     self.startTime = startTime;
@@ -745,13 +746,14 @@ ZZAVPlayerSettingViewDelegate>
     
     [self beforePlayWithURL:avUrl time:startTime];
 }
+/// 重播
 - (void)rePlayWithURL:(NSURL *)avUrl startTime:(CGFloat)startTime{
     self.configuration.avUrl = avUrl;
     self.startTime = startTime;
     [self.avPlayer zz_playerReplayWithURL:avUrl];
     [self beforePlayWithURL:avUrl time:startTime];
 }
-//播放前准备
+#pragma mark - 播放前准备
 -(void)beforePlayWithURL:(NSURL *)avUrl time:(CGFloat)time{
     if (self.configuration.isHaveFristImage) {
         self.configuration.avPlayerFirstImage = self.avPlayer.fristImage;
@@ -954,7 +956,11 @@ ZZAVPlayerSettingViewDelegate>
     }
 }
 
--(void)zz_player:(ZZAVPlayer *)avPlayer progress:(CGFloat)progress currentTime:(CGFloat)currentTime durationTime:(CGFloat)durationTime{
+-(void)zz_player:(ZZAVPlayer *)avPlayer
+        progress:(CGFloat)progress
+     currentTime:(CGFloat)currentTime
+    durationTime:(CGFloat)durationTime{
+    
     if (self.fastView.isMoveGestureFast == NO) {
         self.leftTimeLabel.text = [ZZAVPlayerTool zz_avPlayerConvertTime:currentTime];
         self.playScheduleSlider.value = currentTime;
@@ -1107,7 +1113,7 @@ ZZAVPlayerSettingViewDelegate>
 }
 - (UIImageView*)topView{
     if (!_topView) {
-        _topView = [[UIImageView alloc]initWithFrame:CGRectMake(0, ZZAVPlayer_STATUS_BAR_HEIGHT, self.frame.size.width, TopViewH)];
+        _topView = [[UIImageView alloc]initWithFrame:CGRectMake(0, ZZAVPlayer_STATUS_HEIGHT, self.frame.size.width, TopViewH)];
         _topView.image = [UIImage getImageWithNamed:@"zzMakePlayer_top_shadow"];
         _topView.userInteractionEnabled = YES;
     }

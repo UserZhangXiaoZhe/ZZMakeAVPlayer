@@ -24,6 +24,14 @@
 
 }
 #pragma mark - public methods
+/// 是否包含视频轨道
++(BOOL)zz_avPlayerHaveTracksWithURL:(NSURL *)avUrl{
+    AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:avUrl options:nil];
+    
+    NSArray *tracks = [urlAsset tracksWithMediaType:AVMediaTypeVideo];
+    BOOL have = [tracks count] > 0;
+    return have;
+}
 /// 设置时间显示
 + (NSString *)zz_avPlayerConvertTime:(CGFloat)second{
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:second];
@@ -58,13 +66,36 @@
     return seconds;
 }
 
+/// 根据 url 得到完整路径、
++ (NSString*)zz_avPlayerGetDocumentPathWithUrl:(NSURL*)url{
+    NSString *videoPath = [self zzx_documentByAppendingPathComponent:@"avPlayer_Mp4"];
+    NSString *name = [self getNameWithUrl:[url absoluteString]];
+    NSString *videoName = [name stringByAppendingString:@".mp4"];
+    NSString *filePath = [videoPath stringByAppendingPathComponent:videoName];
+    return filePath;
+}
++ (NSString *)getNameWithUrl:(NSString *)url{
+    if (!url.length)  return nil;
+    NSArray *arr = [url.lastPathComponent componentsSeparatedByString:@"."];
+    
+    if (arr.count) {
+        return arr.firstObject;
+    }
+    return url;
+}
 /** 文档地址 */
-+ (NSString *)documentPath{
++ (NSString *)zzx_documentByAppendingPathComponent:(NSString *)string{
     
     BOOL isDir = YES;
-    NSString *docPath = [self getPathOfDictionory:NSDocumentDirectory];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:docPath isDirectory:&isDir ]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:docPath withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString *document = [self getPathOfDictionory:NSDocumentDirectory];
+    NSString *docPath = [document stringByAppendingPathComponent:string];
+    BOOL isDirExist = [[NSFileManager defaultManager] fileExistsAtPath:docPath isDirectory:&isDir ];
+    
+    if (!isDirExist) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:docPath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
     }
     return docPath;
 }

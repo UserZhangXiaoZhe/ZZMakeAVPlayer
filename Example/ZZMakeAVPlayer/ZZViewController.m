@@ -20,7 +20,7 @@
 	
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     button.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-    [button setTitle:@"ZZMakeAVPlayer" forState:UIControlStateNormal];
+    [button setTitle:@"视频播放" forState:UIControlStateNormal];
     button.bounds = CGRectMake(0, 0, button.intrinsicContentSize.width, button.intrinsicContentSize.height);
     button.center = CGPointMake(self.view.center.x, 200);
     [button addTarget:self action:@selector(clickButton:) forControlEvents:UIControlEventTouchUpInside];

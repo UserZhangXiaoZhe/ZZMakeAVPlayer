@@ -10,7 +10,9 @@
 #endif
 #endif
 
+#import "NSBundle+ZZAVPlayerBundle.h"
 #import "UIColor+ZZAVPlayerColor.h"
+#import "UIImage+ZZAVPlayerImage.h"
 #import "ZZAVPlayer.h"
 #import "ZZAVPlayerMacro.h"
 #import "ZZAVPlayerTool.h"
